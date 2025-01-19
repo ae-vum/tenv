@@ -1,0 +1,39 @@
+{
+  "name": "@aevum/tenv",
+  "version": "0.1.0",
+  "description": "A TypeScript library for loading and validating environment variables with schema support.",
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bunx tsup",
+    "dev": "bunx tsup --watch",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "env",
+    "validation",
+    "schema",
+    "config"
+  ],
+  "author": "Aevum",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "tsup": "^8.3.5",
+    "zod": "^3.24.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ae-vum/tenv"
+  }
+}
