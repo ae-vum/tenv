@@ -1,6 +1,6 @@
 # tenv
 
-A TypeScript library for loading and validating environment variables with schema support.
+A TypeScript library for loading and validating environment variables using Zod schemas.
 
 ## Installation
 
@@ -11,43 +11,26 @@ npm install @aevum/tenv
 ## Features
 
 - Type-safe environment variable loading
-- Schema validation
-- Default values
-- Required fields
-- Allowed values validation
-- Regex pattern validation
-- Custom validation functions
-- Array support
-- Sensitive data handling
+- Zod schema validation
 - Flexible error handling strategies
+- .env file support
+- Process.env fallback
 
 ## Usage
 
 ```typescript
 import { loadEnv } from '@aevum/tenv';
+import { z } from 'zod';
+
+const envSchema = z.object({
+  PORT: z.string().transform(Number),
+  API_KEY: z.string(),
+  DEBUG: z.string().transform(val => val === 'true'),
+  ALLOWED_ORIGINS: z.string().transform(val => val.split(','))
+});
 
 const env = loadEnv({
-  schema: {
-    PORT: {
-      type: 'number',
-      required: true,
-      default: 3000
-    },
-    API_KEY: {
-      type: 'string',
-      required: true,
-      sensitive: true
-    },
-    DEBUG: {
-      type: 'boolean',
-      default: false
-    },
-    ALLOWED_ORIGINS: {
-      type: 'array',
-      items: 'string',
-      default: ['http://localhost:3000']
-    }
-  },
+  schema: envSchema,
   dotEnvPath: '.env',
   errorStrategy: 'throw'
 });
@@ -58,66 +41,40 @@ console.log(env.DEBUG); // boolean
 console.log(env.ALLOWED_ORIGINS); // string[]
 ```
 
-## Schema Options
-
-### Basic Types
-- `string`
-- `number`
-- `boolean`
-- `array`
-
-### Configuration Options
+## Configuration Options
 
 ```typescript
-{
-  type: 'string' | 'number' | 'boolean' | 'array';
-  required?: boolean;
-  default?: any;
-  allowedValues?: any[];
-  regex?: RegExp;
-  validation?: (value: any) => boolean;
-  sensitive?: boolean;
-}
-```
-
-### Array Configuration
-
-```typescript
-{
-  type: 'array';
-  items: 'string' | 'number' | 'boolean';
-  required?: boolean;
-  default?: any[];
-  validation?: (value: any[]) => boolean;
-  sensitive?: boolean;
-}
+type LoadEnvOptions<T extends z.ZodTypeAny> = {
+    schema: T;
+    dotEnvPath?: string;
+    errorStrategy?: 'throw' | 'log' | 'silent';
+};
 ```
 
 ## Error Handling
 
 Three strategies available:
 - `throw`: Throws an error (default)
-- `log`: Logs warnings to console
-- `default`: Silently continues with defaults
+- `log`: Logs errors to console
+- `silent`: Continues silently
 
 ```typescript
 loadEnv({
-  schema: {...},
-  errorStrategy: 'throw' | 'log' | 'default'
+  schema: envSchema,
+  errorStrategy: 'throw' | 'log' | 'silent'
 });
 ```
 
 ## Type Safety
 
-The library provides full TypeScript support with inferred types based on your schema:
+Full TypeScript support with Zod schema inference:
 
 ```typescript
-const env = loadEnv({
-  schema: {
-    PORT: { type: 'number' }
-  }
+const envSchema = z.object({
+  PORT: z.number()
 });
 
+const env = loadEnv({ schema: envSchema });
 env.PORT // TypeScript knows this is a number
 ```
 
