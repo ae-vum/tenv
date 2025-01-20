@@ -1,6 +1,6 @@
 {
   "name": "@aevum/tenv",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A TypeScript library for loading and validating environment variables with schema support.",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
